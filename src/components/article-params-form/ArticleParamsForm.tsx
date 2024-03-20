@@ -13,17 +13,46 @@ import {
 	backgroundColors,
 	contentWidthArr,
 	fontSizeOptions,
+	OptionType,
+	ArticleStateType,
 	defaultArticleState,
 } from 'src/constants/articleProps';
 
 export const ArticleParamsForm = () => {
+	//Состояние формы и данных
 	const [form, setForm] = useState<boolean>(false);
-	const formRef = useRef<HTMLFormElement>(null);
+	const [date, setDate] = useState<ArticleStateType>({
+		fontFamilyOption: defaultArticleState.fontFamilyOption,
+		fontSizeOption: defaultArticleState.fontSizeOption,
+		fontColor: defaultArticleState.fontColor,
+		backgroundColor: defaultArticleState.backgroundColor,
+		contentWidth: defaultArticleState.contentWidth,
+	});
 
+	//Вывод формы
+	const formRef = useRef<HTMLFormElement>(null);
 	useEffect(() => {
 		if (formRef.current)
 			formRef.current.classList.toggle(styles.container_open);
 	}, [form]);
+
+	//Функции обработки выбора значений инпутов. Напрашивается кастомный хук
+	function handleFontFamily(item: OptionType) {
+		setDate({ ...date, fontFamilyOption: item });
+	}
+	function handleFontSize(item: OptionType) {
+		setDate({ ...date, fontSizeOption: item });
+	}
+	function handleFontColor(item: OptionType) {
+		setDate({ ...date, fontColor: item });
+	}
+	function handleBackgroundColor(item: OptionType) {
+		setDate({ ...date, backgroundColor: item });
+	}
+	function handlecontentWidth(item: OptionType) {
+		setDate({ ...date, contentWidth: item });
+	}
+
 	return (
 		<>
 			<ArrowButton state={form} openForm={() => setForm(!form)} />
@@ -41,29 +70,34 @@ export const ArticleParamsForm = () => {
 					<Select
 						title='Шрифт'
 						options={fontFamilyOptions}
-						selected={defaultArticleState.fontFamilyOption}
+						selected={date.fontFamilyOption}
+						onChange={handleFontFamily}
 					/>
 					<RadioGroup
 						name='font size'
 						title='размер шрифта'
 						options={fontSizeOptions}
-						selected={defaultArticleState.fontSizeOption}
+						selected={date.fontSizeOption}
+						onChange={handleFontSize}
 					/>
 					<Select
 						title='Цвет шрифта'
 						options={fontColors}
-						selected={defaultArticleState.fontColor}
+						selected={date.fontColor}
+						onChange={handleFontColor}
 					/>
 					<Separator />
 					<Select
 						title='Цвет фона'
 						options={backgroundColors}
-						selected={defaultArticleState.backgroundColor}
+						selected={date.backgroundColor}
+						onChange={handleBackgroundColor}
 					/>
 					<Select
 						title='Ширина контента'
 						options={contentWidthArr}
-						selected={defaultArticleState.contentWidth}
+						selected={date.contentWidth}
+						onChange={handlecontentWidth}
 					/>
 					<div className={styles.bottomContainer}>
 						<Button title='Сбросить' type='reset' />
