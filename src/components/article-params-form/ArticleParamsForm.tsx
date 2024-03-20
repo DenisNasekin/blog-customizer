@@ -18,7 +18,12 @@ import {
 	defaultArticleState,
 } from 'src/constants/articleProps';
 
-export const ArticleParamsForm = () => {
+type ArticleParamsFormProps = {
+	submit: () => void;
+	reset: () => void;
+};
+
+export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	//Состояние формы и данных
 	const [form, setForm] = useState<boolean>(false);
 	const [date, setDate] = useState<ArticleStateType>({
@@ -52,6 +57,10 @@ export const ArticleParamsForm = () => {
 	function handlecontentWidth(item: OptionType) {
 		setDate({ ...date, contentWidth: item });
 	}
+
+	const handleReset = () => {
+		setDate(defaultArticleState);
+	};
 
 	return (
 		<>
@@ -100,8 +109,8 @@ export const ArticleParamsForm = () => {
 						onChange={handlecontentWidth}
 					/>
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' type='reset' />
-						<Button title='Применить' type='submit' />
+						<Button title='Сбросить' type='reset' onClick={handleReset} />
+						<Button title='Применить' type='submit' onClick={props.submit} />
 					</div>
 				</form>
 			</aside>
