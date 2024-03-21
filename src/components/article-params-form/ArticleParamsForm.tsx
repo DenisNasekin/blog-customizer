@@ -35,6 +35,18 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 			formRef.current.classList.toggle(styles.container_open);
 	}, [form]);
 
+	//Открытие и закрытие формы
+	function openFrom() {
+		setForm(!form);
+	}
+	useEffect(() => {
+		function closeFromEsc(event: KeyboardEvent) {
+			if (event.code === 'Escape') setForm(false);
+		}
+		document.addEventListener('keydown', closeFromEsc);
+		return () => document.removeEventListener('keydown', closeFromEsc);
+	}, [form]);
+
 	//Функции обработки выбора значений инпутов. Напрашивается кастомный хук
 	function handleFontFamily(item: OptionType) {
 		setState({ ...state, fontFamilyOption: item });
@@ -60,12 +72,11 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 		props.setDate(state);
-		console.log('test');
 	}
 
 	return (
 		<>
-			<ArrowButton state={form} openForm={() => setForm(!form)} />
+			<ArrowButton state={form} openForm={openFrom} />
 			<aside className={styles.container} ref={formRef}>
 				<form
 					className={styles.form}
