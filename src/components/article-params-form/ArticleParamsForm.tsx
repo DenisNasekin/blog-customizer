@@ -5,7 +5,7 @@ import { RadioGroup } from 'components/radio-group';
 import { Separator } from 'components/separator';
 import { Button } from 'components/button';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, FormEvent } from 'react';
 import styles from './ArticleParamsForm.module.scss';
 import {
 	fontFamilyOptions,
@@ -19,20 +19,14 @@ import {
 } from 'src/constants/articleProps';
 
 type ArticleParamsFormProps = {
-	submit: () => void;
-	reset: () => void;
+	date: ArticleStateType;
+	setDate: (date: ArticleStateType) => void;
 };
 
 export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	//Состояние формы и данных
 	const [form, setForm] = useState<boolean>(false);
-	const [date, setDate] = useState<ArticleStateType>({
-		fontFamilyOption: defaultArticleState.fontFamilyOption,
-		fontSizeOption: defaultArticleState.fontSizeOption,
-		fontColor: defaultArticleState.fontColor,
-		backgroundColor: defaultArticleState.backgroundColor,
-		contentWidth: defaultArticleState.contentWidth,
-	});
+	const [state, setState] = useState(props.date);
 
 	//Вывод формы
 	const formRef = useRef<HTMLFormElement>(null);
@@ -43,30 +37,40 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 
 	//Функции обработки выбора значений инпутов. Напрашивается кастомный хук
 	function handleFontFamily(item: OptionType) {
-		setDate({ ...date, fontFamilyOption: item });
+		setState({ ...state, fontFamilyOption: item });
 	}
 	function handleFontSize(item: OptionType) {
-		setDate({ ...date, fontSizeOption: item });
+		setState({ ...state, fontSizeOption: item });
 	}
 	function handleFontColor(item: OptionType) {
-		setDate({ ...date, fontColor: item });
+		setState({ ...state, fontColor: item });
 	}
 	function handleBackgroundColor(item: OptionType) {
-		setDate({ ...date, backgroundColor: item });
+		setState({ ...state, backgroundColor: item });
 	}
 	function handlecontentWidth(item: OptionType) {
-		setDate({ ...date, contentWidth: item });
+		setState({ ...state, contentWidth: item });
 	}
 
-	const handleReset = () => {
-		setDate(defaultArticleState);
-	};
+	//Функции сброса и отправки формы
+	function handleReset() {
+		setState(defaultArticleState);
+		props.setDate(defaultArticleState);
+	}
+	function handleSubmit(event: FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+		props.setDate(state);
+		console.log('test');
+	}
 
 	return (
 		<>
 			<ArrowButton state={form} openForm={() => setForm(!form)} />
 			<aside className={styles.container} ref={formRef}>
-				<form className={styles.form}>
+				<form
+					className={styles.form}
+					onSubmit={handleSubmit}
+					onReset={handleReset}>
 					<Text
 						as='h2'
 						size={31}
@@ -79,38 +83,38 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 					<Select
 						title='Шрифт'
 						options={fontFamilyOptions}
-						selected={date.fontFamilyOption}
+						selected={state.fontFamilyOption}
 						onChange={handleFontFamily}
 					/>
 					<RadioGroup
 						name='font size'
 						title='размер шрифта'
 						options={fontSizeOptions}
-						selected={date.fontSizeOption}
+						selected={state.fontSizeOption}
 						onChange={handleFontSize}
 					/>
 					<Select
 						title='Цвет шрифта'
 						options={fontColors}
-						selected={date.fontColor}
+						selected={state.fontColor}
 						onChange={handleFontColor}
 					/>
 					<Separator />
 					<Select
 						title='Цвет фона'
 						options={backgroundColors}
-						selected={date.backgroundColor}
+						selected={state.backgroundColor}
 						onChange={handleBackgroundColor}
 					/>
 					<Select
 						title='Ширина контента'
 						options={contentWidthArr}
-						selected={date.contentWidth}
+						selected={state.contentWidth}
 						onChange={handlecontentWidth}
 					/>
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' type='reset' onClick={handleReset} />
-						<Button title='Применить' type='submit' onClick={props.submit} />
+						<Button title='Сбросить' type='reset' />
+						<Button title='Применить' type='submit' />
 					</div>
 				</form>
 			</aside>

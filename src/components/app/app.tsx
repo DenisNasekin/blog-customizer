@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, useState } from 'react';
 import clsx from 'clsx';
 import { Article } from 'src/components/article/Article';
 import { ArticleParamsForm } from 'src/components/article-params-form/ArticleParamsForm';
@@ -6,26 +6,21 @@ import { defaultArticleState } from 'src/constants/articleProps';
 import styles from './app.module.scss';
 
 export const App = () => {
+	const [datePage, setDatePage] = useState(defaultArticleState);
+
 	return (
 		<div
 			className={clsx(styles.main)}
 			style={
 				{
-					'--font-family': defaultArticleState.fontFamilyOption.value,
-					'--font-size': defaultArticleState.fontSizeOption.value,
-					'--font-color': defaultArticleState.fontColor.value,
-					'--container-width': defaultArticleState.contentWidth.value,
-					'--bg-color': defaultArticleState.backgroundColor.value,
+					'--font-family': datePage.fontFamilyOption.value,
+					'--font-size': datePage.fontSizeOption.value,
+					'--font-color': datePage.fontColor.value,
+					'--container-width': datePage.contentWidth.value,
+					'--bg-color': datePage.backgroundColor.value,
 				} as CSSProperties
 			}>
-			<ArticleParamsForm
-				submit={function (): void {
-					throw new Error('Function not implemented.');
-				}}
-				reset={function (): void {
-					throw new Error('Function not implemented.');
-				}}
-			/>
+			<ArticleParamsForm date={datePage} setDate={setDatePage} />
 			<Article />
 		</div>
 	);
