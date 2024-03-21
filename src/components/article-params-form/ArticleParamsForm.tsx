@@ -4,7 +4,7 @@ import { Select } from 'components/select';
 import { RadioGroup } from 'components/radio-group';
 import { Separator } from 'components/separator';
 import { Button } from 'components/button';
-
+import clsx from 'clsx';
 import { useState, useRef, useEffect, FormEvent } from 'react';
 import styles from './ArticleParamsForm.module.scss';
 import {
@@ -23,17 +23,15 @@ type ArticleParamsFormProps = {
 	setDate: (date: ArticleStateType) => void;
 };
 
-export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
+export const ArticleParamsForm = ({
+	date,
+	setDate,
+}: ArticleParamsFormProps) => {
 	//Состояние формы и данных
-	const [form, setForm] = useState<boolean>(false);
-	const [state, setState] = useState(props.date);
+	const [form, setForm] = useState(false);
+	const [state, setState] = useState(date);
 
-	//Вывод формы
 	const formRef = useRef<HTMLFormElement>(null);
-	useEffect(() => {
-		if (formRef.current)
-			formRef.current.classList.toggle(styles.container_open);
-	}, [form]);
 
 	//Открытие и закрытие формы
 	function openFrom() {
@@ -67,17 +65,19 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	//Функции сброса и отправки формы
 	function handleReset() {
 		setState(defaultArticleState);
-		props.setDate(defaultArticleState);
+		setDate(defaultArticleState);
 	}
 	function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
-		props.setDate(state);
+		setDate(state);
 	}
 
 	return (
 		<>
 			<ArrowButton state={form} openForm={openFrom} />
-			<aside className={styles.container} ref={formRef}>
+			<aside
+				className={clsx(styles.container, { [styles.container_open]: form })}
+				ref={formRef}>
 				<form
 					className={styles.form}
 					onSubmit={handleSubmit}
